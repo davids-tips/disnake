@@ -55,9 +55,9 @@ body:
       label: System Information
       description: >
         Run `python -m disnake -v` and paste the output below.
-
         If you are unable to run this command, show some basic information involving
         your system such as operating system and Python version.
+      render: markdown
     validations:
       required: true
   - type: checkboxes
