@@ -21,6 +21,15 @@ pyright = { cmd = "dotenv -f task.env run -- pyright", help = "Run pyright" }
 slotscheck = { cmd = "python -m slotscheck --verbose -m disnake", help = "Run slotscheck" }
 
 
+[tool.towncrier]
+template = 'changes/_template.rst'
+package = "disnake"
+filename = "docs/whats_new.rst"
+directory = "changes"
+title_format = "v{version}"
+underlines = "-~"
+issue_format = ":issue:`{issue}`"
+
 [tool.slotscheck]
 strict-imports = true
 require-superclass = true
