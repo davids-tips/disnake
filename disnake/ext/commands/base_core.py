@@ -30,7 +30,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    Coroutine,
     Dict,
     List,
     Literal,
@@ -54,7 +53,7 @@ if TYPE_CHECKING:
 
     from disnake.interactions import ApplicationCommandInteraction
 
-    from ._types import Check, Error, Hook
+    from ._types import Check, Coro, Error, Hook
     from .cog import Cog, CogT
 
     ApplicationCommandInteractionT = TypeVar(
@@ -63,10 +62,10 @@ if TYPE_CHECKING:
 
     P = ParamSpec("P")
 
-    CommandCallback = Callable[..., Coroutine]
+    CommandCallback = Callable[..., Coro[Any]]
     InteractionCommandCallback = Union[
-        Callable[Concatenate[CogT, ApplicationCommandInteractionT, P], Coroutine],
-        Callable[Concatenate[ApplicationCommandInteractionT, P], Coroutine],
+        Callable[Concatenate[CogT, ApplicationCommandInteractionT, P], Coro[Any]],
+        Callable[Concatenate[ApplicationCommandInteractionT, P], Coro[Any]],
     ]
 
 
