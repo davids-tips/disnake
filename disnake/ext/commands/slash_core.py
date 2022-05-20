@@ -444,6 +444,10 @@ class InvokableSlashCommand(InvokableApplicationCommand):
             other.connectors = self.connectors.copy()
         if self.autocompleters != other.autocompleters:
             other.autocompleters = self.autocompleters.copy()
+            # Link existing autocompleter to the newly copied slash command...
+            for autocompleter in other.autocompleters.values():
+                if callable(autocompleter):
+                    autocompleter.__slash_command__ = other
         if self.children != other.children:
             other.children = self.children.copy()
         if self.description != other.description and "description" not in other.__original_kwargs__:
@@ -734,8 +738,8 @@ def slash_command(
         .. versionadded:: 2.5
 
     guild_ids: List[:class:`int`]
-        If specified, the client will register a command in these guilds.
-        Otherwise this command will be registered globally in ~1 hour.
+        If specified, the client will register the command in these guilds.
+        Otherwise, this command will be registered globally.
     connectors: Dict[:class:`str`, :class:`str`]
         Binds function names to option names. If the name
         of an option already matches the corresponding function param,
