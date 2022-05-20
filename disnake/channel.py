@@ -2274,8 +2274,6 @@ class ForumChannel(disnake.abc.GuildChannel, Hashable):
             ("nsfw", self.nsfw),
             ("category_id", self.category_id),
             ("default_auto_archive_duration", self.default_auto_archive_duration),
-            ("available_tags", self.available_tags),
-            ("template", self.template),
         ]
         joined = " ".join("%s=%r" % t for t in atts)
         return f"<{type(self).__name__} {joined}>"
