@@ -68,7 +68,7 @@ if TYPE_CHECKING:
     from .role import Role
     from .stage_instance import StageInstance
     from .sticker import GuildSticker
-    from .threads import Thread
+    from .threads import Thread, ThreadTag
     from .types.audit_log import (
         AuditLogChange as AuditLogChangePayload,
         AuditLogEntry as AuditLogEntryPayload,
@@ -161,12 +161,45 @@ def _guild_hash_transformer(path: str) -> Callable[[AuditLogEntry, Optional[str]
     return _transform
 
 
+def _transform_tag(entry: AuditLogEntry, data: Optional[str]) -> Optional[Union[ThreadTag, Object]]:
+    if data is None:
+        return None
+    tag_id = int(data)
+    tag: Optional[ThreadTag] = None
+
+    # try getting thread parent
+    from .channel import ForumChannel  # cyclic import
+
+    thread = entry.guild.get_thread(entry._target_id)  # type: ignore
+    if thread and isinstance(thread.parent, ForumChannel):
+        tag = thread.parent.get_tag(tag_id)
+    else:
+        # if not found (possibly archived/uncached thread), search all forum channels
+        # TODO: remove this once threads from the audit log data are accessible, and use them instead
+        for forum in entry.guild.forum_channels:
+            if tag := forum.get_tag(tag_id):
+                break
+
+    return tag or Object(id=tag_id)
+
+
 T = TypeVar("T", bound=enums.Enum)
 
 
 def _enum_transformer(enum: Type[T]) -> Callable[[AuditLogEntry, int], T]:
     def _transform(entry: AuditLogEntry, data: int) -> T:
         return enums.try_enum(enum, data)
+
+    return _transform
+
+
+def _list_transformer(
+    func: Callable[[AuditLogEntry, Any], T]
+) -> Callable[[AuditLogEntry, Any], List[T]]:
+    def _transform(entry: AuditLogEntry, data: Any) -> List[T]:
+        if not data:
+            return []
+        return [func(entry, value) for value in data if value is not None]
 
     return _transform
 
@@ -260,6 +293,7 @@ class AuditLogChanges:
         'entity_type':                   (None, _enum_transformer(enums.GuildScheduledEventEntityType)),
         'status':                        (None, _enum_transformer(enums.GuildScheduledEventStatus)),
         'type':                          (None, _transform_type),
+        'applied_tags':                  ('tags', _list_transformer(_transform_tag))
     }
     # fmt: on
 

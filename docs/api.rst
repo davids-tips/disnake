@@ -2199,6 +2199,7 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.rtc_region`
         - :attr:`~AuditLogDiff.video_quality_mode`
         - :attr:`~AuditLogDiff.default_auto_archive_duration`
+        - :attr:`~AuditLogDiff.template`
 
     .. attribute:: channel_delete
 
@@ -2800,6 +2801,7 @@ of :class:`enum.Enum`.
         - :attr:`~AuditLogDiff.archived`
         - :attr:`~AuditLogDiff.locked`
         - :attr:`~AuditLogDiff.auto_archive_duration`
+        - :attr:`~AuditLogDiff.tags`
 
         .. versionadded:: 2.0
 
@@ -3980,6 +3982,21 @@ AuditLogDiff
         not necessarily all of the command's permissions.
 
         :type: Dict[:class:`int`, :class:`ApplicationCommandPermissions`]
+
+    .. attribute:: template
+
+        The template for new threads of a forum channel being changed.
+
+        :type: :class:`str`
+
+    .. attribute:: tags
+
+        The applied tags of a thread in a forum channel being changed.
+
+        If a tag is not found, then it is an :class:`Object` with the ID
+        being set.
+
+        :type: List[Union[:class:`ThreadTag`, :class:`Object`]]
 
 .. this is currently missing the following keys: reason and application_id
    I'm not sure how to about porting these
